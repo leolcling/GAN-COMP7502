@@ -44,26 +44,6 @@ with tf.device('/gpu:%d' % gpu_id):
     real = tf.placeholder(tf.float32, shape=[None, 64, 64, 3])
     z = tf.placeholder(tf.float32, shape=[None, z_dim])
 
-    # weights
-    D_W1 = tf.Variable(xavier_init([re_size*re_size, 128]))
-    D_b1 = tf.Variable(tf.zeros(shape=[128]))
-
-    D_W2 = tf.Variable(xavier_init([128, 1]))
-    D_b2 = tf.Variable(tf.zeros(shape=[1]))
-
-    theta_D =
-
-
-    Z = tf.placeholder(tf.float32, shape=[None, 100])
-
-    G_W1 = tf.Variable(xavier_init([100, 128]))
-    G_b1 = tf.Variable(tf.zeros(shape=[128]))
-
-    G_W2 = tf.Variable(xavier_init([128, re_size*re_size]))
-    G_b2 = tf.Variable(tf.zeros(shape=[re_size*re_size]))
-
-    theta_G =
-
     # generate
     fake = generator(z, reuse=False)
 
@@ -78,8 +58,8 @@ with tf.device('/gpu:%d' % gpu_id):
     g_loss = tf.losses.sigmoid_cross_entropy(tf.ones_like(f_logit), f_logit)
 
     # otpims
-    d_var = [D_W1, D_W2, D_b1, D_b2]
-    g_var = [G_W1, G_W2, G_b1, G_b2]
+    d_var = utils.trainable_variables('discriminator')
+    g_var = utils.trainable_variables('generator')
     d_step = tf.train.AdamOptimizer(learning_rate=lr, beta1=0.5).minimize(d_loss, var_list=d_var)
     g_step = tf.train.AdamOptimizer(learning_rate=lr, beta1=0.5).minimize(g_loss, var_list=g_var)
 
